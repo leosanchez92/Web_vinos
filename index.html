@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Kalycatas: mapa de viñedos</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/css/leaflet.css"/>
+    <link rel="stylesheet" href="assets/css/leaflet.defaultextent.css"/>
+    <link rel="stylesheet" href="assets/css/leaflet-search.css"/>
+    <link rel="stylesheet" href="assets/css/easy-button.css"/>
+    <script src="assets/js/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="assets/js/leaflet.defaultextent.js"></script>
+    <script src="assets/js/leaflet-search.js"></script>
+    <script src="assets/js/leaflet-side-by-side.js"></script>
+    <script src="assets/js/easy-button.js"></script>
+
+    <script src="data/vinedos.js"></script>
+    <script src="data/geo.js"></script>
+
+<style>
+    html, body {
+			height: 100%;
+			margin: 0;
+		}
+	.leaflet-container {
+			height: 100%;
+			width: auto;
+			max-width: 100%;
+			max-height: 100%;
+		}
+    .leaflet-tooltip {
+            font-family: 'Roboto', sans-serif;
+            position: absolute;
+            padding: 1px 3px;
+            background: white;
+            border: none;
+            box-shadow: none;
+            color: rgb(0, 0, 0);
+            font-size: 7px;
+            text-align: center;
+        }
+    #kalycatas {
+        font-size: 10px;
+    }
+
+    #tabla-pop {
+        padding-bottom: 1px;
+    }
+
+    .info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(223, 234, 234, 0.433);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    }
+
+  .info h4 {
+    margin: 0 0 5px;
+    color: rgb(109, 24, 24);
+    }
+
+  .Valle.search-tip b{
+    color: rgb(99, 16, 16);
+    float: right;
+  }
+
+  .leaflet-control-search .search-tooltip {
+    min-width: min-content;
+    max-width: max-content; 
+  }
+
+  .leaflet-control-search .search-tip {
+    margin-left :2px;
+    min-width: max-content;
+    padding:2px 4px;
+  }
+
+  .leaflet-control-search .search-tip b{
+    margin-left: 4px;
+  }
+  
+  #logo{
+    position: absolute;
+    z-index: 999;
+    bottom: 25px;
+    right: 15px;
+    opacity: 0.6;
+
+  }
+
+
+</style>
+</head>
+<div id="map" class="">
+  <div id="logo">
+    <img src="/assets/images/logo.png" width="120px">
+  </div>
+</div>
+
+<script>
+var map = L.map('map', {zoomControl: true, defaultExtentControl: true, zoomSnap: 0.1, minZoom: 5, maxZoom: 20}).setView([-32.617148237917948, -70.92350345984283], 8);
+map.createPane('left');
+map.createPane('right');
+
+var googleSat = L.tileLayer('http://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    attribution: '©<a href="http://www.google.com/"> Google</a>',
+    opacity: 1,
+    minZoom: 5,
+    maxZoom: 20,
+    minNativeZoom: 0,
+    maxNativeZoom: 20,
+    zIndex: 399,
+}).addTo(map);
+
+//Oneach Viña
+function onEachVina(feature, layer) {
+  var popupContent =  '<div style="text-align:left">\
+                          <table id="tabla-pop" class="table table-hover table-sm">\
+                          <tr>\
+                            <th scope="row">VIÑEDO</th>\
+                            <td>' + ":" + '</td>\
+                            <td>' + (feature.properties.VINA) +  '</td>\
+                          </tr>\
+                          <tr>\
+                            <th scope="row">VALLE</th>\
+                            <td>' + ":" + '</td>\
+                            <td>' + (feature.properties.VALLE) + '</td>\
+                          </tr>\
+                          </table></div>\
+                          <div><i id="kalycatas">Guía Kalycatas</i></div>'
+                          ;
+  layer.bindPopup(popupContent,{
+    maxHeight: 400,
+  });
+  layer.on({
+    click: zoomToFeature,
+    'mouseover': function(e){
+      layer.setIcon(iconoVinedo2);
+      info.update(layer.feature.properties);
+    },
+    'mouseout': function(e){
+      layer.setIcon(iconoVinedo);
+      info.update();
+    }
+  })
+};
+
+function zoomToFeature(e) {
+    map.setView([e.latlng.lat, e.latlng.lng], 14);
+    layer.setIcon(iconoVinedo2);
+}
+
+//Ícono estándar
+var iconoVinedo = L.icon({
+    iconUrl: 'data/wine.png',
+    iconSize: [28, 28],
+              popupAnchor: [12, -30],
+              iconAnchor: [15, 42]
+});
+
+function iconWine(feature) {
+  var icon;
+    if (feature.properties.VINA!= '') icon = iconoVinedo;
+    else;
+    return icon
+};
+
+//Ícono grande
+var iconoVinedo2 = L.icon({
+    iconUrl: 'data/wine2.png',
+    iconSize: [38, 38],
+              popupAnchor: [12, -30],
+              iconAnchor: [15, 42]
+});
+
+function iconWine2(feature) {
+  var icon;
+    if (feature.properties.VINA!= '') icon = iconoVinedo2;
+    else;
+    return icon
+};
+
+//Ícono selección búsqueda
+var iconoVinedo3 = L.icon({
+    iconUrl: 'data/wine3.png',
+    iconSize: [28, 28],
+              popupAnchor: [12, -30],
+              iconAnchor: [15, 42]
+});
+
+function iconWine3(feature) {
+  var icon;
+    if (feature.properties.VINA!= '') icon = iconoVinedo3;
+    else;
+    return icon
+};
+
+//Geo
+var geologia2 = new L.geoJson(geo, {
+  pane: 'left'
+});
+
+var geologia = new L.geoJson(geo, {
+  style: styleGeo,
+  pane: 'right'
+});
+
+function styleGeo(feature) {
+  return{
+    fillOpacity: 0.3,
+    opacity: 0.2,
+    color: 'red',
+    weight: 0.6,
+    fill: true,
+    fillColor: 'blue'
+  }
+};
+
+//Viñedos geojson
+var vinedos = new L.geoJson(vinedos, {
+   pointToLayer: function (feature, latlong){
+    return L.marker(latlong, {icon: iconWine(feature), interactive: true})},
+   onEachFeature: onEachVina
+}).addTo(map);
+
+var info = L.control();
+
+//Info
+info.onAdd = function(map) {
+  this._div = L.DomUtil.create('div', 'info');
+  this.update();
+  return this._div;
+};
+
+info.update = function(props) {
+  this._div.innerHTML = '<h4>Viñedo</h4>' + (props ?
+        '<b>Viña ' + props.VINA + '</b><br />'
+        : 'Desplaza el cursor <br> sobre un viñedo');
+}
+
+info.addTo(map);
+
+var searchControl = new L.Control.Search({
+  layer: vinedos,
+  propertyName: 'VINA',
+  initial: false,
+  marker: false,
+  buildTip: function(text, val) {
+    var type = val.layer.feature.properties.VALLE;
+    return '<a href="#" class="'+type+'">'+text+'<b>'+type+'</b></a>';
+  },
+  zoom: 16,
+  textPlaceholder: 'Buscar viñedo',
+  textCancel: 'Cancelar',
+  textErr: 'No encontrado'
+});
+
+searchControl.on('search:locationfound', function(e) {
+  e.layer.setIcon(iconoVinedo3);
+  if(e.layer._popup)
+    e.layer.openPopup();
+}).on('search:collapsed', function(e) {
+  vinedos.eachLayer(function(layer) {
+    layer.setIcon(iconoVinedo)
+  });
+});
+
+var side = L.control.sideBySide(geologia2, geologia);
+
+L.easyButton('<img src="/assets/images/g.png" style="width:16px">', function(){
+  $('.leaflet-sbs-range').is(':visible') ? map.removeControl(side) : map.addControl(side);
+  $('.leaflet-sbs-range').is(':visible') ? map.addLayer(geologia) : map.removeLayer(geologia);
+}).addTo(map);
+
+map.addControl(searchControl);
+
+</script>
+<body>
+    
+</body>
+</html>;
