@@ -99,7 +99,7 @@
 </head>
 <div id="map" class="">
   <div id="logo">
-    <img src="/assets/images/logo.png" width="120px">
+    <img src="images/logo.png" width="120px">
   </div>
 </div>
 
@@ -273,7 +273,7 @@ searchControl.on('search:locationfound', function(e) {
 
 var side = L.control.sideBySide(geologia2, geologia);
 
-L.easyButton('<img src="/assets/images/g.png" style="width:16px">', function(){
+L.easyButton('<img src="images/g.png" style="width:16px">', function(){
   $('.leaflet-sbs-range').is(':visible') ? map.removeControl(side) : map.addControl(side);
   $('.leaflet-sbs-range').is(':visible') ? map.addLayer(geologia) : map.removeLayer(geologia);
 }).addTo(map);
