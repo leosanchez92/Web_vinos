@@ -423,10 +423,16 @@ info.onAdd = function(map) {
 };
 
 info.update = function(props) {
+  if (screen.width <= 500) {
+    this._div.innerHTML = '<h4>Viñedo</h4>' + (props ?
+        '<b>Viña ' + props.VINA + '</b><br />'
+        : 'Pulsa un viñedo');
+  }else{
   this._div.innerHTML = '<h4>Viñedo</h4>' + (props ?
         '<b>Viña ' + props.VINA + '</b><br />'
         : 'Desplaza el cursor <br> sobre un viñedo');
-}
+      }  
+};
 //Info Geología
 info2.onAdd = function(map) {
   this._div = L.DomUtil.create('div', 'info');
@@ -435,11 +441,18 @@ info2.onAdd = function(map) {
 };
 
 info2.update = function(props) {
+  if (screen.width <= 500) {
   this._div.innerHTML = '<h4>Geología</h4>' + (props ?
         '<b>Código: </b>' + props.CD_GEOL + '<br/>'+
         '<b>Unidad geológica: </b>' + props.un_UNI_2 + '<br/>' 
+        : 'Pulsa sobre <br>una capa geológica');
+  }else{
+    this._div.innerHTML = '<h4>Geología</h4>' + (props ?
+        '<b>Código: </b>' + props.CD_GEOL + '<br/>'+
+        '<b>Unidad geológica: </b>' + props.un_UNI_2 + '<br/>' 
         : 'Desplaza el cursor <br> sobre una capa geológica');
-}
+  };
+      };
 
 info.addTo(map);
 
