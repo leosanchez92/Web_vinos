@@ -550,12 +550,14 @@ info2.update = function(props) {
   if (screen.width <= 500) {
   this._div.innerHTML = '<h4>Geología</h4>' + (props ?
         '<b>Código: </b>' + props.CD_GEOL + '<br/>'+
-        '<b>Unidad geológica: </b>' + props.un_UNI_2 + '<br/>' 
+        '<b>Unidad geológica: </b>' + props.un_UNI_2 + '<br/>' +
+        '<b>Valle: </b>' + props.D_O + '<br/>' 
         : 'Pulsa sobre <br>una capa geológica');
   }else{
     this._div.innerHTML = '<h4>Geología</h4>' + (props ?
         '<b>Código: </b>' + props.CD_GEOL + '<br/>'+
-        '<b>Unidad geológica: </b>' + props.un_UNI_2 + '<br/>' 
+        '<b>Unidad geológica: </b>' + props.un_UNI_2 + '<br/>' +
+        '<b>Valle: </b>' + props.D_O + '<br/>' 
         : 'Desplaza el cursor <br> sobre una capa geológica');
   };
       };
