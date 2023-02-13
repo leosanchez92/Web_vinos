@@ -25,6 +25,7 @@
 
     <script src="data/ad.js"></script>
     <script src="data/geo.js"></script>
+    <script src="data/do_contorno.js"></script>
 
 <style>
     html, body {
@@ -61,7 +62,7 @@
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
     background: white;
-    background: rgba(223, 234, 234, 0.433);
+    background: rgb(223, 234, 234);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
     max-width: 300px;
@@ -297,7 +298,6 @@ function onEachVina(feature, layer) {
                           <tr>\
                             <th scope="row">VALLE</th>\
                             <td>' + ":" + '</td>\
-                            <td>' + (feature.properties.VALLE) + '</td>\
                           </tr>\
                           </table></div>\
                           <div><i id="kalycatas">Guía Kalycatas</i></div>'
@@ -317,7 +317,7 @@ function onEachVina(feature, layer) {
                           </table></div>\
                           <div><i id="kalycatas">Guía Kalycatas</i></div>'
                           ;
-  if(feature.properties.VALLE == ""){
+  if(feature.properties.X == ""){
   layer.bindPopup(popupContent2,{
     maxHeight: 400,
   })} else {layer.bindPopup(popupContent, {maxHeight: 400})};
@@ -415,7 +415,7 @@ function iconWine2(feature) {
 
 //Ícono selección búsqueda
 var iconoVinedo3 = L.icon({
-    iconUrl: 'data/wine3_.png',
+    iconUrl: 'data/wine2_.png',
     iconSize: [28, 28],
               popupAnchor: [12, -30],
               iconAnchor: [15, 42]
@@ -467,6 +467,8 @@ function onEachGeo(feature, layer) {
   var layer = e.target;
     layer.setStyle({
       weight: 3,
+      color: 'white',
+      opacity: 0,
       dashArray: '',
       fillOpacity: 0.5
   });
@@ -475,6 +477,36 @@ function onEachGeo(feature, layer) {
   function resetHighlightGeo(e) {
   geologia.resetStyle(e.target);
 };
+
+//D.O.
+var contorno_do = new L.geoJson(do_contour, {
+  style: styleDO,
+  onEachFeature: onEachDO,
+  pane: 'right',
+  interactive: false
+});
+
+function styleDO(feature) {
+  return{
+    opacity: 0.8,
+    color: 'red',
+    weight: 2,
+    fillColor: 'white',
+    fillOpacity: 0
+  }
+};
+
+function onEachDO(feature, layer) {    
+  layer.on({
+    'mouseover': function(e){
+      info3.update(layer.feature.properties);
+    },
+    'mouseout': function(e){
+      info3.update();
+    }
+  })
+};
+
 
 //Viñedos geojson
 var vinedos = new L.geoJson(vinedos, {
@@ -486,8 +518,6 @@ var vinedos = new L.geoJson(vinedos, {
 var info = L.control();
 var info2 = L.control();
 
-
-
 //Info
 info.onAdd = function(map) {
   this._div = L.DomUtil.create('div', 'info');
@@ -498,11 +528,13 @@ info.onAdd = function(map) {
 info.update = function(props) {
   if (screen.width <= 500) {
     this._div.innerHTML = '<h4>Viñedo</h4>' + (props ?
-        '<b>Viña ' + props.VINA + '</b><br />'
+        '<b>Viña ' + props.VINA + '</b><br />'+
+        '<b>D.O.:</b> ' + props.VALLE + '<br />'
         : 'Pulsa un viñedo');
   }else{
   this._div.innerHTML = '<h4>Viñedo</h4>' + (props ?
-        '<b>Viña ' + props.VINA + '</b><br />'
+        '<b>Viña ' + props.VINA + '</b><br />'+
+        '<b>D.O.:</b> ' + props.VALLE + '</b><br />'
         : 'Desplaza el cursor <br> sobre un viñedo');
       }  
 };
@@ -537,12 +569,12 @@ var searchControl = new L.Control.Search({
   buildTip: function(text, val) {
     var type = val.layer.feature.properties.VALLE;
     var type2 = val.layer.feature.properties.DO;
-    if(val.layer.feature.properties.VALLE == ""){
+    if(val.layer.feature.properties.X == ""){
     return '<a href="#" class="'+type2+'">'+text+'<b>'+type2+'</b></a>'}
     else{return '<a href="#" class="'+type+'">'+text+'<b>'+type+'</b></a>'}
   },
   zoom: 16,
-  textPlaceholder: 'Buscar viñedo',
+  textPlaceholder: 'Buscar viña',
   textCancel: 'Cancelar',
   textErr: 'No encontrado'
 });
@@ -586,6 +618,7 @@ var boton1 = L.easyButton('<img src="images/g.png" style="width:18px; margin-rig
   $('.leaflet-sbs-range').is(':visible') ? map.removeControl(side) : map.addControl(side);
   $('.leaflet-sbs-range').is(':visible') ? map.addControl(info2) : map.removeControl(info2);
   $('.leaflet-sbs-range').is(':visible') ? map.addLayer(geologia) : map.removeLayer(geologia);
+  $('.leaflet-sbs-range').is(':visible') ? map.addLayer(contorno_do) : map.removeLayer(contorno_do);
 }).addTo(map);
 
 map.addControl(searchControl);
