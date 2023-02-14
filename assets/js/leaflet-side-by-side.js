@@ -62,10 +62,21 @@ L.Control.SideBySide = L.Control.extend({
   },
 
   getPosition: function () {
+    if (screen.width >= 500) {
+    var rangeValue = this._range.value
+    var offset = (0.7 - rangeValue) * (2 * this.options.padding + this.options.thumbSize)
+    return this._map.getSize().x * rangeValue + offset
+  }else{
     var rangeValue = this._range.value
     var offset = (0.5 - rangeValue) * (2 * this.options.padding + this.options.thumbSize)
     return this._map.getSize().x * rangeValue + offset
-  },
+  };
+},
+
+
+
+
+  
 
   setPosition: noop,
 
