@@ -484,7 +484,8 @@ function onEachGeo(feature, layer) {
 //D.O.
 var contorno_do = new L.geoJson(do_contour, {
   style: styleDO,
-  interactive: false
+  interactive: false,
+  pane: 'right'
 });
 
 function styleDO(feature) {
