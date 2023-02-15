@@ -429,6 +429,8 @@ function iconWine3(feature) {
     return icon
 };
 
+
+
 //Geo
 var geologia2 = new L.geoJson(geo, {
   pane: 'left'
@@ -482,8 +484,6 @@ function onEachGeo(feature, layer) {
 //D.O.
 var contorno_do = new L.geoJson(do_contour, {
   style: styleDO,
-  onEachFeature: onEachDO,
-  pane: 'right',
   interactive: false
 });
 
@@ -497,27 +497,31 @@ function styleDO(feature) {
   }
 };
 
-function onEachDO(feature, layer) {    
-  layer.on({
-    'mouseover': function(e){
-      info3.update(layer.feature.properties);
-    },
-    'mouseout': function(e){
-      info3.update();
-    }
-  })
-};
-
 
 //Viñedos geojson
-var vinedos = new L.geoJson(vinedos, {
+
+var vinedos1 = new L.geoJson(vinedos, {
    pointToLayer: function (feature, latlong){
     return L.marker(latlong, {icon: iconWine(feature), interactive: true})},
-   onEachFeature: onEachVina
-}).addTo(map);
+   onEachFeature: onEachVina,
+   filter: function(feature, layer){
+    return(feature.properties.X == "")
+   }
+});
+
+var vinedos2 = new L.geoJson(vinedos, {
+   pointToLayer: function (feature, latlong){
+    return L.marker(latlong, {icon: iconWine(feature), interactive: true})},
+   onEachFeature: onEachVina,
+   filter: function(feature, layer){
+    return(feature.properties.X != "")
+   }
+});
+
 
 var info = L.control();
 var info2 = L.control();
+
 
 //Info
 info.onAdd = function(map) {
@@ -564,8 +568,14 @@ info2.update = function(props) {
 
 info.addTo(map);
 
+//Busqueda
+var searchLayers = L.layerGroup([
+  vinedos1,
+  vinedos2
+]).addTo(map);
+
 var searchControl = new L.Control.Search({
-  layer: vinedos,
+  layer: searchLayers,
   propertyName: 'VINA',
   initial: false,
   marker: false,
@@ -579,7 +589,8 @@ var searchControl = new L.Control.Search({
   zoom: 16,
   textPlaceholder: 'Buscar viña',
   textCancel: 'Cancelar',
-  textErr: 'No encontrado'
+  textErr: 'No encontrado',
+  collapsed: true
 });
 
 searchControl.on('search:locationfound', function(e) {
@@ -608,7 +619,12 @@ searchControl.on('search:locationfound', function(e) {
 });
 
 searchControl.on('search:collapsed', function(e) {
- vinedos.eachLayer(function(layer) {
+ vinedos1.eachLayer(function(layer) {
+ if(layer.feature.properties.VINO == ''){
+    layer.setIcon(iconoVinedo)
+  }else{layer.setIcon(iconoVinedo4)};
+});
+vinedos2.eachLayer(function(layer) {
  if(layer.feature.properties.VINO == ''){
     layer.setIcon(iconoVinedo)
   }else{layer.setIcon(iconoVinedo4)};
@@ -617,16 +633,18 @@ searchControl.on('search:collapsed', function(e) {
 
 var side = L.control.sideBySide(geologia2, geologia);
 
-var boton1 = L.easyButton('<img src="images/g.png" style="width:18px; margin-right:-1px; margin-top:-1px">', function(){
+var boton1 = L.easyButton('<img src="images/g.png" style="width:18px; margin-right:-1px; margin-top:-1px">', function(btn, map){
   $('.leaflet-sbs-range').is(':visible') ? map.removeControl(side) : map.addControl(side);
   $('.leaflet-sbs-range').is(':visible') ? map.addControl(info2) : map.removeControl(info2);
   $('.leaflet-sbs-range').is(':visible') ? map.addLayer(geologia) : map.removeLayer(geologia);
   $('.leaflet-sbs-range').is(':visible') ? map.addLayer(contorno_do) : map.removeLayer(contorno_do);
-}).addTo(map);
+  $('.leaflet-sbs-range').is(':visible') ? searchLayers.removeLayer(vinedos2) : searchLayers.addLayer(vinedos2);
+  }, 'Añadir capa geológica').addTo(map);
+
 
 map.addControl(searchControl);
 
-var boton1 = L.easyButton('<i class="fa fa-question-circle" style="font-size: 24px; margin-top: 3px; margin-left: -1px"></i>', function(btn, map){
+var boton2 = L.easyButton('<i class="fa fa-question-circle" style="font-size: 24px; margin-top: 3px; margin-left: -1px"></i>', function(btn, map){
   $('#aboutModal').modal('show');}, 'Ayuda').addTo(map);
 
 
