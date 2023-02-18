@@ -291,12 +291,12 @@ function onEachVina(feature, layer) {
   var popupContent =  '<div style="text-align:left">\
                           <table id="tabla-pop" class="table table-hover table-sm">\
                           <tr>\
-                            <th scope="row">VIÑEDO</th>\
+                            <th scope="row">Viñedo</th>\
                             <td>' + ":" + '</td>\
                             <td>' + (feature.properties.VINA) +  '</td>\
                           </tr>\
                           <tr>\
-                            <th scope="row">VALLE</th>\
+                            <th scope="row">Denominación de origen</th>\
                             <td>' + ":" + '</td>\
                             <td>' + (feature.properties.VALLE) +  '</td>\
                           </tr>\
@@ -306,12 +306,12 @@ function onEachVina(feature, layer) {
   var popupContent2 =  '<div style="text-align:left">\
                           <table id="tabla-pop" class="table table-hover table-sm">\
                           <tr>\
-                            <th scope="row">VIÑEDO</th>\
+                            <th scope="row">Viñedo</th>\
                             <td>' + ":" + '</td>\
                             <td>' + (feature.properties.VINA) +  '</td>\
                           </tr>\
                           <tr>\
-                            <th scope="row">VALLE</th>\
+                            <th scope="row">Denominación de origen</th>\
                             <td>' + ":" + '</td>\
                             <td>' + (feature.properties.DO) + '</td>\
                           </tr>\
@@ -556,13 +556,13 @@ info2.update = function(props) {
   this._div.innerHTML = '<h4>Geología</h4>' + (props ?
         '<b>Código: </b>' + props.CD_GEOL + '<br/>'+
         '<b>Unidad geológica: </b>' + props.un_UNI_2 + '<br/>' +
-        '<b>Valle: </b>' + props.D_O + '<br/>' 
+        '<b>D.O.:</b> ' + props.D_O + '<br/>' 
         : 'Pulsa sobre <br>una capa geológica');
   }else{
     this._div.innerHTML = '<h4>Geología</h4>' + (props ?
         '<b>Código: </b>' + props.CD_GEOL + '<br/>'+
         '<b>Unidad geológica: </b>' + props.un_UNI_2 + '<br/>' +
-        '<b>Valle: </b>' + props.D_O + '<br/>' 
+        '<b>D.O.:</b> ' + props.D_O + '<br/>' 
         : 'Desplaza el cursor <br> sobre una capa geológica');
   };
       };
