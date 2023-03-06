@@ -296,7 +296,7 @@ function onEachVina(feature, layer) {
                             <td>' + (feature.properties.VINA) +  '</td>\
                           </tr>\
                           <tr>\
-                            <th scope="row">Denominación de origen</th>\
+                            <th scope="row">Denominación de Origen</th>\
                             <td>' + ":" + '</td>\
                             <td>' + (feature.properties.VALLE) +  '</td>\
                           </tr>\
@@ -308,10 +308,15 @@ function onEachVina(feature, layer) {
                           <tr>\
                             <th scope="row">Viña</th>\
                             <td>' + ":" + '</td>\
-                            <td>' + (feature.properties.VINA) +  '</td>\
+                            <td>' + (feature.properties.VIN_2) +  '</td>\
                           </tr>\
                           <tr>\
-                            <th scope="row">Denominación de origen</th>\
+                            <th scope="row">Vino</th>\
+                            <td>' + ":" + '</td>\
+                            <td>' + (feature.properties.VINO) +  '</td>\
+                          </tr>\
+                          <tr>\
+                            <th scope="row">Denominación de Origen</th>\
                             <td>' + ":" + '</td>\
                             <td>' + (feature.properties.DO) + '</td>\
                           </tr>\
@@ -348,7 +353,7 @@ function openSidebar(e) {
   if(e.target.feature.properties.Clima != ""){
   sidebar.show()
   } else {sidebar.hide()};
-  $('.vina').html(e.target.feature.properties.VINA);
+  $('.vina').html(e.target.feature.properties.VIN_2);
   $('.vino').html(e.target.feature.properties.VINO);
   $('.anno').html(e.target.feature.properties.Anno);
   $('.do').html(e.target.feature.properties.DO);
@@ -533,12 +538,12 @@ info.onAdd = function(map) {
 
 info.update = function(props) {
   if (screen.width <= 500) {
-    this._div.innerHTML = '<h4>Viñedo</h4>' + (props ?
+    this._div.innerHTML = '<h4>Viña</h4>' + (props ?
         '<b>Viña ' + props.VINA + '</b><br />'+
         '<b>D.O.:</b> ' + props.VALLE + '<br />'
         : 'Pulsa un viñedo');
   }else{
-  this._div.innerHTML = '<h4>Viñedo</h4>' + (props ?
+  this._div.innerHTML = '<h4>Viña</h4>' + (props ?
         '<b>Viña ' + props.VINA + '</b><br />'+
         '<b>D.O.:</b> ' + props.VALLE + '</b><br />'
         : 'Desplaza el cursor <br> sobre un viñedo');
@@ -601,7 +606,7 @@ searchControl.on('search:locationfound', function(e) {
   if(e.layer.feature.properties.VINO != ""){
   sidebar.show()
   } else {sidebar.hide()};
-  $('.vina').html(e.layer.feature.properties.VINA);
+  $('.vina').html(e.layer.feature.properties.VIN_2);
   $('.vino').html(e.layer.feature.properties.VINO);
   $('.anno').html(e.layer.feature.properties.Anno);
   $('.do').html(e.layer.feature.properties.DO);
