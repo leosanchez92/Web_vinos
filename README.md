@@ -1,5 +1,7 @@
 # Web Vinos — Guía Kalycatas
 
+*🧓 Creado antes de la IA.*
+
 Mapa interactivo de viñedos construido con [Leaflet](https://leafletjs.com/), [Bootstrap](https://getbootstrap.com/) y jQuery. Permite explorar viñedos por Denominación de Origen (D.O.), buscar viñas por nombre y consultar información geológica, climática y de viticultura de cada ubicación.
 
 ## Características
